@@ -1,4 +1,4 @@
-package com.chenxu.thread_cx;
+package com.chenxu.leetcode;
 
 public class maxArea11 {
     public static void main(String[] args) {

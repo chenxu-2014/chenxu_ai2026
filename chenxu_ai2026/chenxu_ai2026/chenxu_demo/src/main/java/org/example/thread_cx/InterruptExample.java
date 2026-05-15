@@ -1,4 +1,4 @@
-package com.chenxu.thread_cx;
+package org.example.thread_cx;
 
 public class InterruptExample {
 //    public static void main(String[] args) throws InterruptedException {
@@ -62,7 +62,7 @@ public class InterruptExample {
                 }
             }
         }, "t1");
-        t1.setName("xianchengmingsss");
+        t1.setName("线程名:sss");
         t1.start();
         t1.sleep(1);
         System.out.println("=============="+t1.getName());

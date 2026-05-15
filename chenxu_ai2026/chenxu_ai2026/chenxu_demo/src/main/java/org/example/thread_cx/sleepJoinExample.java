@@ -1,4 +1,4 @@
-package com.chenxu.thread_cx;
+package org.example.thread_cx;
 
 public class sleepJoinExample {
     public static void main(String[] args) throws InterruptedException {

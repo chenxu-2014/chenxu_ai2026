@@ -1,6 +1,8 @@
-package com.chenxu.thread_cx;
+package com.chenxu.leetcode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class threeSum15 {
     public static void main(String[] args) {

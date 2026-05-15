@@ -1,11 +1,11 @@
-package com.chenxu.thread_cx;
+package com.chenxu.leetcode;
 
 
 
 public class lunzhuanshuzu189 {
     public static void main(String[] args) {
         int[] nums= {-1,-100,3,99};
-       int[] numsZ= {1,2,3,4,5,6,7};
+        int[] numsZ= {1,2,3,4,5,6,7};
         System.out.println(rotate(nums,2)[1]);
         System.out.println(rotate(numsZ,3)[1]);
         System.out.println(nums);

@@ -1,9 +1,17 @@
-package com.chenxu.thread_cx;
+package com.chenxu.leetcode.huadongchuangkou;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+//https://leetcode.cn/problems/find-all-anagrams-in-a-string/description/
+//示例 1:
+//
+//输入: s = "cbaebabacd", p = "abc"
+//输出: [0,6]
+//解释:
+//起始索引等于 0 的子串是 "cba", 它是 "abc" 的异位词。
+//起始索引等于 6 的子串是 "bac", 它是 "abc" 的异位词。
 public class findAnagrams438 {
     public static void main(String[] args) {
        System.out.println(findAnagramsCx("abab","ab"));
@@ -23,8 +31,8 @@ public class findAnagrams438 {
             return ans;
         }
         //建立两个数组存放字符串中字母出现的词频，并以此作为标准比较
-        int [] scount=new int[26];
-        int [] pcount=new int[26];
+        int[] scount=new int[26];
+        int[] pcount=new int[26];
 
         //当滑动窗口的首位在s[0]处时 （相当于放置滑动窗口进入数组）
         for(int i=0;i<pLen;i++){

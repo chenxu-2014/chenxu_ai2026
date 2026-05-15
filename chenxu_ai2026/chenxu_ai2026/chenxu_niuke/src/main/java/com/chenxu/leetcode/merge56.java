@@ -1,4 +1,4 @@
-package com.chenxu.thread_cx;
+package com.chenxu.leetcode;
 
 import java.util.Arrays;
 

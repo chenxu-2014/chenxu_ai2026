@@ -1,4 +1,4 @@
-package com.chenxu.thread_cx;
+package com.chenxu.leetcode;
 
 public class reverseList206 {
       public static class ListNode {
