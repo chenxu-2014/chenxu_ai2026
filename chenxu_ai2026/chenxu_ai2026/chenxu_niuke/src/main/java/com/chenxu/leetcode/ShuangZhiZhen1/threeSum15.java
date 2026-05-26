@@ -1,4 +1,4 @@
-package com.chenxu.leetcode;
+package com.chenxu.leetcode.ShuangZhiZhen1;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -2,6 +2,7 @@ package org.example.kafka;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,5 +19,11 @@ public class KafkaTestController {
     public String send(@RequestParam String key, @RequestParam String value) {
         producer.send(key, value);
         return "消息已发送: key=" + key + ", value=" + value;
+    }
+
+    @PostMapping("/sendOrdered")
+    public String sendOrdered() {
+        producer.sendBatchOrdered();
+        return "已发送10条有序消息，请观察消费顺序";
     }
 }
