@@ -1,12 +1,63 @@
 spring:
   kafka:
-    bootstrap-servers: 192.168.249.xxx:9092
+    bootstrap-servers: 192.168.249.129:9092
     consumer:
       group-id: cx-hash-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       enable-auto-commit: true
+   # Kafka 集群地址
+    producer:
+      # 序列化器配置
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # 生产者核心参数（通过 properties 传递给 Kafka 原生客户端）
+      properties:
+        # ========== 顺序保证关键配置 ==========
+        # 1. 开启幂等性（必须设置为 true）
+        #    - 自动将 acks 设置为 all
+        #    - 自动将 retries 设置为 Integer.MAX_VALUE
+        #    - 自动将 max.in.flight.requests.per.connection 限制为 ≤5
+        #    - 为每个生产者批次添加 PID 和序列号，Broker 会去重并保证顺序
+        enable.idempotence: true
+
+        # 2. 所有副本确认（幂等性会强制要求 acks=all，显式写出更清晰）
+        acks: all
+
+        # 3. 重试次数（幂等性下会自动设为极大值，此处可手动配置）
+        retries: 10
+
+        # 4. 单连接最多未确认请求数
+        #    - 幂等性允许最大值为 5（若设置 >5 会被自动降为 5）
+        #    - 允许 5 个批次在途，既保证顺序又兼顾吞吐量
+        max.in.flight.requests.per.connection: 5
+
+        # ========== 其他推荐性能参数 ==========
+        # 批量大小（字节），默认 16KB
+        batch.size: 16384
+        # 延迟发送时间（毫秒），攒批发送
+        linger.ms: 5
+        # 请求超时（毫秒）
+        request.timeout.ms: 30000
+        # 元数据更新超时
+        metadata.max.age.ms: 300000
+  data:
+    redis:
+      port: 6379
+      password: snCJadmin-1
+      host: 192.168.249.129
+      database: 0
+      timeout: 5000
+  datasource:
+    url: jdbc:mysql://192.168.249.129:3306/austin?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf-8
+    username: root
+    password: snCJadmin-1
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: org.example.redis.load
 
 kafka:
   topic: HASH_PAR_CX

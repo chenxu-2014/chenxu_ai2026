@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    C_METER 表的 MyBatis Mapper XML 映射文件。
+
+    namespace 必须与 Mapper 接口的全限定类名一致，
+    MyBatis 启动时会校验 namespace 与接口的绑定关系。
+
+    ｜方法        ｜SQL 类型 ｜用途                                    ｜
+    ｜count       ｜SELECT   ｜查总行数，用于进度百分比                   ｜
+    ｜selectByPage｜SELECT   ｜传统 LIMIT 分页（小数据量用，大数据量不推荐）｜
+    ｜streamAll   ｜SELECT   ｜流式游标读取（大数据量全量导出的推荐方式）    ｜
+-->
+<mapper namespace="org.example.redis.load.CmMeterMapper">
+
+    <!--
+        ResultMap：定义数据库列名 → Java 字段名的映射关系。
+
+        注意 COMM_NO 列名是全大写，Java 字段是驼峰 commNo。
+        如果开启 mapUnderscoreToCamelCase=true，MyBatis 会自动将
+        下划线命名转为驼峰，但 COMM_NO 这种全大写列名不会被自动转换，
+        因此需要手动在 ResultMap 中显式映射。
+    -->
+    <resultMap id="BaseResultMap" type="org.example.redis.load.CmMeter">
+        <result column="meter_id"      property="meterId"/>
+        <result column="meter_port"    property="meterPort"/>
+        <result column="COMM_NO"       property="commNo"/>
+        <result column="asset_no"      property="assetNo"/>
+        <result column="meter_address" property="meterAddress"/>
+    </resultMap>
+
+    <!--
+        count：全表计数。
+        1000w 行的 InnoDB COUNT(*) 耗时约 2~5 秒。
+        如果对精度要求不高，可使用 SHOW TABLE STATUS LIKE 'C_METER' 取近似值（毫秒级）。
+    -->
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM C_METER
+    </select>
+
+    <!--
+        selectByPage：传统分页查询（保留备用）。
+
+        LIMIT #{offset}, #{limit} 在大 offset 下存在深分页问题：
+        - offset=9000000 时 MySQL 需扫描并丢弃前 900w 行，再返回后 5000 行
+        - 最后一页可能耗时数秒甚至数十秒
+        - 全量导出场景请使用下面的 streamAll
+    -->
+    <select id="selectByPage" resultMap="BaseResultMap">
+        SELECT meter_id, meter_port, COMM_NO, asset_no, meter_address
+        FROM C_METER
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!--
+        streamAll：流式游标读取全表数据。
+
+        fetchSize="-2147483648"（即 Integer.MIN_VALUE）：
+        - 触发 MySQL JDBC 驱动的 "Streaming ResultSet" 模式
+        - 逐行从 MySQL 服务端拉取数据到客户端
+        - 不会一次性把 1000w 行全部加载到 JVM 堆内存 → 避免 OOM
+        - 不需要 LIMIT offset → 没有深分页问题，每一行都是 O(1) 拉取
+
+        注意事项：
+        - 流式读取期间数据库连接一直被占用，直到 ResultSet 遍历完毕或 close
+        - 不要在遍历过程中执行其他耗时操作（如调第三方 HTTP 接口）
+        - 如果中途抛异常，ResultSet 会被关闭，连接归还给连接池
+    -->
+    <select id="streamAll" resultMap="BaseResultMap" fetchSize="-2147483648">
+        SELECT meter_id, meter_port, COMM_NO, asset_no, meter_address
+        FROM C_METER
+    </select>
+
+</mapper>
