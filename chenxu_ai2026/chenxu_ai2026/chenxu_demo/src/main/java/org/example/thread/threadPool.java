@@ -48,4 +48,17 @@ public class threadPool {
             // 也可以转为异步重试或告警
         }
     }
+
+    /**
+     * 当线程池的容量满了，执行下面代码，将任务存入到缓冲队列
+     */
+    final RejectedExecutionHandler handler = new RejectedExecutionHandler() {
+        @Override
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+            System.out.println("[自定义拒绝] 任务被拒绝，时间: " + System.currentTimeMillis() +
+                    ", 活跃线程数: " + executor.getActiveCount() +
+                    ", 队列大小: " + executor.getQueue().size());
+        }
+        // 订单加入到缓冲队列
+    };
 }
