@@ -19,13 +19,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 限流全局过滤器 — 网关层统一限流
- * - 基于 IP 的简单令牌桶 / 固定窗口计数器
- * - 每 IP 每秒最多 20 个请求
+ * 限流全局过滤器（Demo 版本）
+ * - 基于 IP 的固定窗口计数器，每 IP 每秒最多 20 个请求
  * - 超限返回 429 Too Many Requests
  *
- * TODO: Step 4 接入 Sentinel 后，本过滤器替换为 Sentinel 网关限流，
- *       届时可使用 QPS/并发线程数/热点参数等多种策略，规则可持久化到 Nacos
+ * @deprecated 已由 {@link org.example.gateway.config.SentinelGatewayConfig} 接管，
+ *             提供 Dashboard 可视化管理、动态规则推送、按 API 分组限流等能力。
+ *             保留本类作为手动限流实现的参考。
  */
 @Component
 public class RateLimitFilter implements GlobalFilter, Ordered {

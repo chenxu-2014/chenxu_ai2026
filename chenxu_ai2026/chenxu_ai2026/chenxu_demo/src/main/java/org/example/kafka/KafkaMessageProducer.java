@@ -1,6 +1,9 @@
 package org.example.kafka;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.example.sentinel.SentinelBlockHandler;
+import org.example.sentinel.SentinelRulesInit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -25,6 +28,14 @@ public class KafkaMessageProducer {
      * @param key   业务key（如订单ID、用户ID），相同key保证顺序
      * @param value 消息内容
      */
+    // ========== Sentinel 熔断限流：QPS 流控 + 异常比例熔断 ==========
+    @SentinelResource(
+            value = SentinelRulesInit.RESOURCE_KAFKA_SEND,
+            blockHandlerClass = SentinelBlockHandler.class,
+            blockHandler = "kafkaSendBlock",
+            fallbackClass = SentinelBlockHandler.class,
+            fallback = "kafkaSendFallback"
+    )
     public void send(String key, String value) {
         CompletableFuture<SendResult<String, String>> future = kafkaTemplate.send(topic, key, value);
         future.whenComplete((result, ex) -> {

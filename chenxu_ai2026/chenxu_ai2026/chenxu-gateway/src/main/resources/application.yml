@@ -15,6 +15,18 @@ spring:
         namespace: 589e3087-3772-45e7-95a0-6130a8a038f3
         group: DEFAULT_GROUP
         file-extension: yaml
+    # ========== Sentinel 网关层熔断限流 ==========
+    # 替换此前简单的 RateLimitFilter，提供 Dashboard 可视化管理、动态规则推送
+    sentinel:
+      transport:
+        dashboard: 192.168.249.129:8858   # Sentinel Dashboard 控制台地址
+        port: 8720                         # 客户端通信端口（与 chenxu_demo 的 8719 区分）
+      eager: true                          # 启动即初始化
+      scg:                                 # Spring Cloud Gateway 适配
+        fallback:                          # 网关限流/熔断时返回的统一响应
+          mode: response
+          response-status: 429
+          response-body: '{"code":429,"msg":"Sentinel 网关限流，请稍后重试"}'
     # ========== 统一网关：请求路由配置 ==========
     # Gateway 自动从 Nacos 发现下游服务，通过 lb://serviceName 做负载均衡路由
     gateway:
@@ -23,7 +35,7 @@ spring:
         - id: chenxu-demo-route
           uri: lb://chenxu-demo          # lb:// 表示从 Nacos 获取实例列表，LoadBalancer 做负载均衡
           predicates:
-            - Path=/meter/**,/kafka/**,/redis/**   # 匹配这些路径的请求转发到 chenxu-demo
+            - Path=/meter/**,/kafka/**,/redis/**,/sentinel/**   # 匹配这些路径的请求转发到 chenxu-demo
           filters:
             - StripPrefix=0                # 不剥离前缀，原样转发
 

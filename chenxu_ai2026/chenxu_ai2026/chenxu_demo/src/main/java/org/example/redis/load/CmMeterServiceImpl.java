@@ -1,5 +1,8 @@
 package org.example.redis.load;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import org.example.sentinel.SentinelBlockHandler;
+import org.example.sentinel.SentinelRulesInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +27,8 @@ import java.util.concurrent.atomic.AtomicLong;
  *   <li>Pipeline 将多次写入命令打包在一次网络往返中发送给 Redis，大幅减少 RTT 开销</li>
  * </ol>
  * <p>
- * 为什么不用多线程并行写 Redis？
- * <ul>
- *   <li>Redis 是单线程处理命令的（6.0 之前），多线程写入并不会被 Redis 并行执行</li>
- *   <li>多线程写同一个 Key 还可能导致数据错乱</li>
- *   <li>单线程 + Pipeline 已经可以打满 Redis 的处理能力（通常 5~10 万 ops/s）</li>
- * </ul>
- * 如果需要加速，可以考虑将数据按 meter_id 哈希分片到多个 Redis 节点（集群模式）。
+ * Sentinel 防护：loadAllToRedis 是重量级操作（1000w 行全量加载），通过
+ * {@code @SentinelResource} 实现了并发线程数流控（最多 1 个线程）和慢调用熔断。
  */
 @Service
 public class CmMeterServiceImpl implements CmMeterService {
@@ -64,6 +62,14 @@ public class CmMeterServiceImpl implements CmMeterService {
      * @return 加载结果摘要
      */
     @Override
+    // ========== Sentinel 熔断限流：并发线程数流控 + 慢调用熔断 ==========
+    @SentinelResource(
+            value = SentinelRulesInit.RESOURCE_LOAD_ALL,
+            blockHandlerClass = SentinelBlockHandler.class,
+            blockHandler = "loadAllToRedisBlock",
+            fallbackClass = SentinelBlockHandler.class,
+            fallback = "loadAllToRedisFallback"
+    )
     public String loadAllToRedis() {
         // 1. 查总记录数，仅用于进度展示，不参与业务逻辑
         long total = cmMeterMapper.count();

@@ -15,6 +15,12 @@ spring:
         server-addr: 192.168.249.129:8848
         namespace: 589e3087-3772-45e7-95a0-6130a8a038f3
         group: DEFAULT_GROUP
+    # ========== Sentinel 熔断限流配置 ==========
+    sentinel:
+      transport:
+        dashboard: 192.168.249.129:8858   # Sentinel Dashboard 控制台地址
+        port: 8719                         # 客户端通信端口（Dashboard 向此端口推送规则）
+      eager: true                          # 启动即初始化，默认懒加载
   config:
     import:
       - optional:nacos:chenxu-demo.yaml
