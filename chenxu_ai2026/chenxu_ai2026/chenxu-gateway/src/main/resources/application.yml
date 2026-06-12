@@ -1,0 +1,35 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: chenxu-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.249.129:8848
+        namespace: 589e3087-3772-45e7-95a0-6130a8a038f3
+        group: DEFAULT_GROUP
+      config:
+        server-addr: 192.168.249.129:8848
+        namespace: 589e3087-3772-45e7-95a0-6130a8a038f3
+        group: DEFAULT_GROUP
+        file-extension: yaml
+    # ========== 统一网关：请求路由配置 ==========
+    # Gateway 自动从 Nacos 发现下游服务，通过 lb://serviceName 做负载均衡路由
+    gateway:
+      routes:
+        # ---- 路由到 chenxu-demo 服务 ----
+        - id: chenxu-demo-route
+          uri: lb://chenxu-demo          # lb:// 表示从 Nacos 获取实例列表，LoadBalancer 做负载均衡
+          predicates:
+            - Path=/meter/**,/kafka/**,/redis/**   # 匹配这些路径的请求转发到 chenxu-demo
+          filters:
+            - StripPrefix=0                # 不剥离前缀，原样转发
+
+      # ========== 全局默认过滤器 ==========
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin  # 去重 CORS 头
+  config:
+    import:
+      - optional:nacos:chenxu-gateway.yaml

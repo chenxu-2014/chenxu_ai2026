@@ -1,0 +1,15 @@
+# ========== 网关 Nacos 配置（可选） ==========
+# 在 Nacos 控制台创建:
+#   Namespace: shiyue (589e3087-3772-45e7-95a0-6130a8a038f3)
+#   Group:     DEFAULT_GROUP
+#   Data ID:   chenxu-gateway.yaml
+# ==============================================
+# 说明：网关核心配置已在 application.yml 中，
+#       Nacos 配置仅用于需要动态刷新的参数，
+#       如路由规则调整、限流阈值变更等。
+#       当前为空模板，后续按需添加。
+#
+# 示例——动态调整限流阈值：
+# gateway:
+#   rate-limit:
+#     max-rps: 50

@@ -11,6 +11,7 @@
     <modules>
         <module>chenxu_niuke</module>
         <module>chenxu_demo</module>
+        <module>chenxu-gateway</module>
     </modules>
 
     <properties>
