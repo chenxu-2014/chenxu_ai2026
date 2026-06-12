@@ -1,20 +1,11 @@
+# ========== 业务配置 ==========
+# 在 Nacos 控制台创建:
+#   Namespace: shiyue
+#   Group:     DEFAULT_GROUP
+#   Data ID:   chenxu-demo.yaml
+# =================================
+
 spring:
-  application:
-    name: chenxu-demo
-  cloud:
-    nacos:
-      config:
-        server-addr: 192.168.249.129:8848
-        namespace: 589e3087-3772-45e7-95a0-6130a8a038f3
-        group: DEFAULT_GROUP
-        file-extension: yaml
-      discovery:
-        server-addr: 192.168.249.129:8848
-        namespace: 589e3087-3772-45e7-95a0-6130a8a038f3
-        group: DEFAULT_GROUP
-  config:
-    import:
-      - optional:nacos:chenxu-demo.yaml
   kafka:
     bootstrap-servers: 192.168.249.129:9092
     consumer:
