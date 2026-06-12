@@ -36,7 +36,8 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             "/actuator/",           // 健康检查
             "/meter/getkey/",       // Redis 查询（示例公开接口）
             "/meter/count",         // Redis 统计（示例公开接口）
-            "/sentinel/"            // Sentinel 测试端点
+            "/sentinel/",           // Sentinel 测试端点
+            "/order/"               // 交易链路演示端点
     );
 
     @Override
