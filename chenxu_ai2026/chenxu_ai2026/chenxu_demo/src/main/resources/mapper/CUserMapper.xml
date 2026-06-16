@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.datacompare.mapper.CUserMapper">
+
+    <resultMap id="BaseResultMap" type="org.example.datacompare.dto.CUserDto">
+        <id     column="id"          property="id"/>
+        <result column="user_id"     property="userId"/>
+        <result column="user_name"   property="userName"/>
+        <result column="phone"       property="phone"/>
+        <result column="email"       property="email"/>
+        <result column="id_card"     property="idCard"/>
+        <result column="gender"      property="gender"/>
+        <result column="birth_date"  property="birthDate"/>
+        <result column="address"     property="address"/>
+        <result column="status"      property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM c_user
+    </select>
+
+    <select id="selectByCursor" resultMap="BaseResultMap">
+        SELECT id, user_id, user_name, phone, email, id_card,
+               gender, birth_date, address, status, create_time, update_time
+        FROM c_user
+        WHERE id > #{cursor}
+        ORDER BY id
+        LIMIT #{size}
+    </select>
+
+    <select id="selectByUserIds" resultMap="BaseResultMap">
+        SELECT id, user_id, user_name, phone, email, id_card,
+               gender, birth_date, address, status, create_time, update_time
+        FROM c_user
+        WHERE user_id IN
+        <foreach collection="userIds" item="uid" open="(" separator="," close=")">
+            #{uid}
+        </foreach>
+    </select>
+
+    <select id="selectAllUserIds" resultType="string">
+        SELECT user_id FROM c_user
+    </select>
+
+    <!-- ========== Hash 分桶查询（>>>5亿数据场景） ========== -->
+    <!--
+        使用 CRC32(user_id) % bucketCount 将数据均匀分到 N 个桶，
+        逐桶处理，每个桶的 allUserIds HashSet 大小 = 总量 ÷ 桶数。
+        例如 5亿/100桶 = 500万/桶，内存可控。
+
+        生产环境建议增加 bucket TINYINT 计算列并建索引：
+          ALTER TABLE c_user ADD bucket TINYINT
+            GENERATED ALWAYS AS (MOD(CRC32(user_id), 100)) STORED;
+          CREATE INDEX idx_bucket_id ON c_user(bucket, id);
+    -->
+
+    <select id="countByBucket" resultType="long">
+        SELECT COUNT(*) FROM c_user
+        WHERE MOD(CRC32(user_id), #{bucketCount}) = #{bucket}
+    </select>
+
+    <select id="selectByBucketAndCursor" resultMap="BaseResultMap">
+        SELECT id, user_id, user_name, phone, email, id_card,
+               gender, birth_date, address, status, create_time, update_time
+        FROM c_user
+        WHERE MOD(CRC32(user_id), #{bucketCount}) = #{bucket}
+          AND id > #{cursor}
+        ORDER BY id
+        LIMIT #{size}
+    </select>
+
+    <select id="selectUserIdsByBucket" resultType="string">
+        SELECT user_id FROM c_user
+        WHERE MOD(CRC32(user_id), #{bucketCount}) = #{bucket}
+    </select>
+
+</mapper>

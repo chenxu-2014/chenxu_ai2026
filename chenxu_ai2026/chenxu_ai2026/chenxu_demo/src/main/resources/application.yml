@@ -59,7 +59,7 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: org.example.redis.load
+  type-aliases-package: org.example.redis.load;org.example.datacompare.dto;org.example.datacompare.entity
 
 kafka:
   topic: HASH_PAR_CX
