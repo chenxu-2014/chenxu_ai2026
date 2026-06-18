@@ -6,14 +6,14 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/auth': 'http://localhost:8081',
-      '/meter': 'http://localhost:8081',
-      '/compare': 'http://localhost:8081',
-      '/kafka': 'http://localhost:8081',
-      '/sendOrdered': 'http://localhost:8081',
-      '/redis': 'http://localhost:8081',
-      '/sentinel': 'http://localhost:8081',
-      '/order': 'http://localhost:8081'
+      '/auth': 'http://localhost:8080',
+      '/meter': 'http://localhost:8080',
+      '/compare': 'http://localhost:8080',
+      '/kafka': 'http://localhost:8080',
+      '/sendOrdered': 'http://localhost:8080',
+      '/redis': 'http://localhost:8080',
+      '/sentinel': 'http://localhost:8080',
+      '/order': 'http://localhost:8080'
     }
   }
 })
