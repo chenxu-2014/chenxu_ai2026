@@ -21,12 +21,20 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;
 
-    /** 白名单：不需要 Token 的路径前缀 */
+    /** 白名单：Demo 端点 + 认证 + 健康检查 */
     private static final List<String> WHITELIST = List.of(
             "/auth/login",
             "/auth/register",
             "/public/",
-            "/actuator/"
+            "/actuator/",
+            "/api/log/",        // 日志采集（Gateway 内部调用）
+            "/meter/",          // 电表数据 Demo
+            "/compare/",        // 数据比对 Demo
+            "/kafka/",          // Kafka 消息测试 Demo
+            "/sendOrdered",     // Kafka 有序消息 Demo
+            "/redis/",          // Redis 数据类型 Demo
+            "/sentinel/",       // Sentinel 测试端点
+            "/order/"           // 交易链路演示端点
     );
 
     public JwtInterceptor(JwtUtil jwtUtil) {
