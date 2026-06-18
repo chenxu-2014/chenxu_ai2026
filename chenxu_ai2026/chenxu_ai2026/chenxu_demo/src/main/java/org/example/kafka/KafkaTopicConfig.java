@@ -32,7 +32,19 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic tracingTopic() {
         return TopicBuilder.name(tracingTopic)
-                .partitions(3)                  // 3 个分区，按 traceId 哈希保证同一链路有序
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    // ========== API 请求日志 Topic — 网关/服务访问日志 ==========
+    @Value("${log.kafka.topic:api-logs}")
+    private String apiLogTopic;
+
+    @Bean
+    public NewTopic apiLogTopic() {
+        return TopicBuilder.name(apiLogTopic)
+                .partitions(3)
                 .replicas(1)
                 .build();
     }

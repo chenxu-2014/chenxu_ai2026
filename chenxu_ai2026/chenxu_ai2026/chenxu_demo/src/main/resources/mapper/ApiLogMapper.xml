@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.log.ApiLogMapper">
+
+    <resultMap id="BaseResultMap" type="org.example.log.entity.ApiLog">
+        <id column="id" property="id"/>
+        <result column="trace_id" property="traceId"/>
+        <result column="method" property="method"/>
+        <result column="path" property="path"/>
+        <result column="source_ip" property="sourceIp"/>
+        <result column="status_code" property="statusCode"/>
+        <result column="elapsed_ms" property="elapsedMs"/>
+        <result column="user_id" property="userId"/>
+        <result column="service_name" property="serviceName"/>
+        <result column="error_msg" property="errorMsg"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_api_log (trace_id, method, path, source_ip, status_code,
+                                  elapsed_ms, user_id, service_name, error_msg, create_time)
+        VALUES (#{traceId}, #{method}, #{path}, #{sourceIp}, #{statusCode},
+                #{elapsedMs}, #{userId}, #{serviceName}, #{errorMsg}, NOW())
+    </insert>
+
+</mapper>

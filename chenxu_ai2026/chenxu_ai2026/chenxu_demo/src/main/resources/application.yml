@@ -18,7 +18,7 @@ spring:
     # ========== Sentinel 熔断限流配置 ==========
     sentinel:
       transport:
-        dashboard: 192.168.249.129:8858   # Sentinel Dashboard 控制台地址
+        dashboard: localhost:8858   # Sentinel Dashboard 控制台地址（本地运行）
         port: 8719                         # 客户端通信端口（Dashboard 向此端口推送规则）
       eager: true                          # 启动即初始化，默认懒加载
   config:
@@ -59,7 +59,7 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: org.example.redis.load;org.example.datacompare.dto;org.example.datacompare.entity;org.example.auth.entity
+  type-aliases-package: org.example.redis.load;org.example.datacompare.dto;org.example.datacompare.entity;org.example.auth.entity;org.example.log.entity
 
 kafka:
   topic: HASH_PAR_CX
@@ -69,6 +69,11 @@ kafka:
 tracing:
   topic: TracingTopic
 
+# API 日志 Kafka Topic
+log:
+  kafka:
+    topic: api-logs
+
 # ========== 分布式链路追踪：Micrometer Tracing + Zipkin ==========
 management:
   tracing:
@@ -76,7 +81,7 @@ management:
       probability: 1.0                        # 100% 采样（Demo 环境，生产建议 0.1）
   zipkin:
     tracing:
-      endpoint: http://192.168.249.129:9411/api/v2/spans  # Zipkin Server 地址
+      endpoint: http://localhost:9411/api/v2/spans  # Zipkin Server 地址（本地运行）
 
 # 日志中输出 traceId / spanId，方便定位调用链
 logging:
