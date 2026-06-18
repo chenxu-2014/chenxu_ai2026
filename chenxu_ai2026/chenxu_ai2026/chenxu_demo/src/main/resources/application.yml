@@ -59,7 +59,7 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: org.example.redis.load;org.example.datacompare.dto;org.example.datacompare.entity
+  type-aliases-package: org.example.redis.load;org.example.datacompare.dto;org.example.datacompare.entity;org.example.auth.entity
 
 kafka:
   topic: HASH_PAR_CX
@@ -82,3 +82,8 @@ management:
 logging:
   pattern:
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+# ========== JWT 配置 ==========
+jwt:
+  secret: chenxu-demo-jwt-secret-key-2026-shiyue
+  expire-ms: 7200000   # 2 小时
