@@ -63,7 +63,6 @@
         </dependency>
 
         <!-- ========== Sentinel 网关层熔断限流 ========== -->
-        <!-- 提供 SentinelGatewayFilter，在网关入口统一控制流量，替换此前简单的 RateLimitFilter -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>

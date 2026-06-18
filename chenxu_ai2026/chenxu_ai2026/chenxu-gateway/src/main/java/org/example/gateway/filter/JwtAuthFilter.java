@@ -32,10 +32,14 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     private static final List<String> WHITELIST = List.of(
             "/auth/login",          // 登录接口
             "/auth/register",       // 注册接口
+            "/auth/",               // 认证相关路径
             "/public/",             // 公开资源
             "/actuator/",           // 健康检查
-            "/meter/getkey/",       // Redis 查询（示例公开接口）
-            "/meter/count",         // Redis 统计（示例公开接口）
+            "/meter/",              // 电表数据 Demo
+            "/compare/",            // 数据比对 Demo
+            "/kafka/",              // Kafka 消息测试 Demo
+            "/sendOrdered",         // Kafka 有序消息 Demo
+            "/redis/",              // Redis 数据类型 Demo
             "/sentinel/",           // Sentinel 测试端点
             "/order/"               // 交易链路演示端点
     );

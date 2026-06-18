@@ -11,10 +11,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * 请求日志全局过滤器 — 统一网关日志处理
- * - 记录每个请求的方法、路径、来源 IP
- * - 记录响应状态码和耗时
- * - 使用 SLF4J 输出，可对接 ELK/SkyWalking 等日志平台
+ * 请求日志全局过滤器 — 记录每个请求的方法、路径、IP、耗时
+ * <p>
+ * 日志采集已下沉到 chenxu_demo 服务层（{@code ApiLogInterceptor}），
+ * Gateway 仅保留 SLF4J 控制台日志。
  */
 @Component
 public class RequestLogFilter implements GlobalFilter, Ordered {
@@ -29,10 +29,8 @@ public class RequestLogFilter implements GlobalFilter, Ordered {
         String ip = request.getRemoteAddress() != null
                 ? request.getRemoteAddress().getHostString()
                 : "unknown";
-
         long start = System.currentTimeMillis();
 
-        // 请求进入日志
         log.info("[网关] → {} {} | 来源IP: {}", method, path, ip);
 
         return chain.filter(exchange).then(Mono.fromRunnable(() -> {
@@ -40,14 +38,12 @@ public class RequestLogFilter implements GlobalFilter, Ordered {
             int status = exchange.getResponse().getStatusCode() != null
                     ? exchange.getResponse().getStatusCode().value()
                     : 0;
-            // 响应完成日志（含耗时）
             log.info("[网关] ← {} {} | 状态: {} | 耗时: {}ms", method, path, status, elapsed);
         }));
     }
 
     @Override
     public int getOrder() {
-        // 日志在鉴权之后执行
         return -50;
     }
 }

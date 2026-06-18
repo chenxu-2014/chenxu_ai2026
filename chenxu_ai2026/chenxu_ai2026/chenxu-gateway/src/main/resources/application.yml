@@ -16,10 +16,9 @@ spring:
         group: DEFAULT_GROUP
         file-extension: yaml
     # ========== Sentinel 网关层熔断限流 ==========
-    # 替换此前简单的 RateLimitFilter，提供 Dashboard 可视化管理、动态规则推送
     sentinel:
       transport:
-        dashboard: 192.168.249.129:8858   # Sentinel Dashboard 控制台地址
+        dashboard: localhost:8858   # Sentinel Dashboard 控制台地址（本地运行）
         port: 8720                         # 客户端通信端口（与 chenxu_demo 的 8719 区分）
       eager: true                          # 启动即初始化
       scg:                                 # Spring Cloud Gateway 适配
@@ -35,7 +34,7 @@ spring:
         - id: chenxu-demo-route
           uri: lb://chenxu-demo          # lb:// 表示从 Nacos 获取实例列表，LoadBalancer 做负载均衡
           predicates:
-            - Path=/meter/**,/kafka/**,/redis/**,/sentinel/**,/order/**   # 匹配这些路径的请求转发到 chenxu-demo
+            - Path=/meter/**,/kafka/**,/redis/**,/sentinel/**,/order/**,/auth/**,/compare/**,/api/**,/sendOrdered
           filters:
             - StripPrefix=0                # 不剥离前缀，原样转发
 
@@ -53,7 +52,7 @@ management:
       probability: 1.0                        # 100% 采样（Demo 环境）
   zipkin:
     tracing:
-      endpoint: http://192.168.249.129:9411/api/v2/spans  # Zipkin Server 地址
+      endpoint: http://localhost:9411/api/v2/spans  # Zipkin Server 地址（本地运行）
 
 logging:
   pattern:
