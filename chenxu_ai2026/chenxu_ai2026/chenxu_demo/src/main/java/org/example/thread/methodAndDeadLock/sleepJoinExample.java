@@ -27,7 +27,8 @@ public class sleepJoinExample {
             System.out.println("Worker1 finished");
         });
 
-        worker.start();worker.join();
+        worker.start();
+        worker.join();
         worker1.start();
         // 主线程等待worker线程完成
 
