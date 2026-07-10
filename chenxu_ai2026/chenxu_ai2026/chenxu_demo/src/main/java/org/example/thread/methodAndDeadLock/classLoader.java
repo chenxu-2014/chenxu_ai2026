@@ -1,4 +1,4 @@
-package org.example.thread_cx;
+package org.example.thread.methodAndDeadLock;
 
 public class classLoader {
     public static void main(String[] args) {

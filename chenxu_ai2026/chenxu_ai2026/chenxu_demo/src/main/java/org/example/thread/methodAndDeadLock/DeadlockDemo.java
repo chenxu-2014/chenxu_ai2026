@@ -1,4 +1,4 @@
-package org.example.thread_cx;
+package org.example.thread.methodAndDeadLock;
 
 public class DeadlockDemo {
         private static final Object resource1 = new Object();

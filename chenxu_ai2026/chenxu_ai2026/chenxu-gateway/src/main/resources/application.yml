@@ -45,7 +45,7 @@ spring:
     import:
       - optional:nacos:chenxu-gateway.yaml
 
-# ========== 分布式链路追踪：Micrometer Tracing + Zipkin ==========
+# ========== Actuator 管理端点：链路追踪 + Prometheus 指标 ==========
 management:
   tracing:
     sampling:
@@ -53,6 +53,16 @@ management:
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans  # Zipkin Server 地址（本地运行）
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics   # 暴露 Prometheus 端点给 Prometheus Server 采集
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}     # 给所有指标打上应用名标签
 
 logging:
   pattern:
