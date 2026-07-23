@@ -41,6 +41,16 @@ spring:
       # ========== 全局默认过滤器 ==========
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin  # 去重 CORS 头
+
+      # ========== 全局 CORS（处理 OPTIONS 预检）==========
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "http://localhost:*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
   config:
     import:
       - optional:nacos:chenxu-gateway.yaml

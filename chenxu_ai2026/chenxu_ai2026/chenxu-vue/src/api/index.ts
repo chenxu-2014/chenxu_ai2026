@@ -1,6 +1,5 @@
 import axios from 'axios'
 import type { AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
-import type { ApiResponse } from '../types/api'
 
 // 创建 Axios 实例
 const http: AxiosInstance = axios.create({

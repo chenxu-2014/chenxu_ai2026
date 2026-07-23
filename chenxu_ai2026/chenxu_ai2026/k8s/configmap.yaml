@@ -1,0 +1,36 @@
+# ============================================
+# ConfigMap — 非敏感的公共配置
+# 这些环境变量会被 Spring Boot relaxed binding 自动映射
+# 覆盖 application.yml 中的默认值
+# ============================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: chenxu
+data:
+  # ---- Nacos（注册中心 + 配置中心）----
+  NACOS_SERVER_ADDR: "192.168.249.129:8848"
+  NACOS_NAMESPACE: "589e3087-3772-45e7-95a0-6130a8a038f3"
+
+  # ---- MySQL ----
+  MYSQL_HOST: "192.168.249.129"
+  MYSQL_PORT: "3306"
+  MYSQL_DATABASE: "austin"
+
+  # ---- Redis ----
+  REDIS_HOST: "192.168.249.129"
+  REDIS_PORT: "6379"
+
+  # ---- Kafka ----
+  KAFKA_BOOTSTRAP_SERVERS: "192.168.249.129:9092"
+
+  # ---- Sentinel Dashboard（宿主机，可选）----
+  # 如果 Sentinel 在宿主机运行，K8s 内需要用宿主机 IP 访问
+  # Docker Desktop 中宿主机网关通常是 192.168.65.254 或 host.docker.internal
+  # kind 容器中，宿主机 IP 可通过以下方式获取:
+  #   docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' <kind-container>
+  SENTINEL_DASHBOARD: "localhost:8858"
+
+  # ---- Zipkin（宿主机，可选）----
+  ZIPKIN_ENDPOINT: "http://localhost:9411/api/v2/spans"

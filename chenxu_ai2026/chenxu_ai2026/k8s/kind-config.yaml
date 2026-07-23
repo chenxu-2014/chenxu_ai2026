@@ -1,0 +1,17 @@
+# ============================================
+# kind (Kubernetes in Docker) 集群配置
+# 用法: kind create cluster --config k8s/kind-config.yaml
+# ============================================
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: chenxu-cluster
+nodes:
+  - role: control-plane
+    # 将容器端口映射到宿主机，方便从 Windows 直接访问
+    extraPortMappings:
+      - containerPort: 30080   # chenxu-gateway NodePort
+        hostPort: 30080
+        protocol: TCP
+      - containerPort: 31080   # chenxu-vue NodePort
+        hostPort: 31080
+        protocol: TCP

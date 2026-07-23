@@ -1,0 +1,82 @@
+# ============================================
+# chenxu-gateway: Deployment + NodePort Service
+# ============================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chenxu-gateway
+  namespace: chenxu
+  labels:
+    app: chenxu-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chenxu-gateway
+  template:
+    metadata:
+      labels:
+        app: chenxu-gateway
+    spec:
+      containers:
+        - name: chenxu-gateway
+          image: chenxu-gateway:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            # ---- Nacos ----
+            - name: SPRING_CLOUD_NACOS_CONFIG_SERVER-ADDR
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: NACOS_SERVER_ADDR
+            - name: SPRING_CLOUD_NACOS_DISCOVERY_SERVER-ADDR
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: NACOS_SERVER_ADDR
+          envFrom:
+            - configMapRef:
+                name: app-config
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chenxu-gateway
+  namespace: chenxu
+  labels:
+    app: chenxu-gateway
+spec:
+  type: NodePort
+  selector:
+    app: chenxu-gateway
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+      protocol: TCP

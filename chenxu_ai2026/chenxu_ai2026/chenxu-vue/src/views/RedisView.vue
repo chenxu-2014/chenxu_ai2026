@@ -4,10 +4,10 @@
 
     <div class="actions">
       <button v-for="t in types" :key="t.key" @click="doDemo(t.key, t.fn)"
-              :disabled="loading" class="btn btn-info">
+              :disabled="!!loading" class="btn btn-info">
         {{ t.label }}
       </button>
-      <button @click="doClean" :disabled="loading" class="btn btn-warn">清理 demo 数据</button>
+      <button @click="doClean" :disabled="!!loading" class="btn btn-warn">清理 demo 数据</button>
     </div>
 
     <div v-if="result !== null" class="card">
@@ -24,8 +24,8 @@ import {
   demoBitmap, demoHyperLogLog, demoGeo, demoStream, cleanDemos
 } from '../api/redis'
 
-type LoadingType = string | null
-const loading = ref<LoadingType>(null)
+type LoadingType = string | false
+const loading = ref<LoadingType>(false)
 const result = ref<any>(null)
 
 const types = [
@@ -44,14 +44,14 @@ async function doDemo(key: string, fn: () => Promise<any>) {
   loading.value = key
   try { result.value = await fn() }
   catch (e: any) { result.value = e.message || '请求失败' }
-  finally { loading.value = null }
+  finally { loading.value = false }
 }
 
 async function doClean() {
   loading.value = 'clean'
   try { result.value = await cleanDemos() }
   catch (e: any) { result.value = e.message || '请求失败' }
-  finally { loading.value = null }
+  finally { loading.value = false }
 }
 </script>
 

@@ -3,10 +3,10 @@
     <h1 class="page-title">🔍 数据比对</h1>
 
     <div class="actions">
-      <button @click="doCompare" :disabled="loading" class="btn btn-primary">
+      <button @click="doCompare" :disabled="!!loading" class="btn btn-primary">
         {{ loading === 'compare' ? '比对中...' : '全量比对' }}
       </button>
-      <button @click="doCompareBuckets" :disabled="loading" class="btn btn-info">
+      <button @click="doCompareBuckets" :disabled="!!loading" class="btn btn-info">
         {{ loading === 'buckets' ? '比对中...' : 'Hash 分桶比对' }}
       </button>
     </div>
@@ -23,7 +23,7 @@
       <h3>查询比对结果</h3>
       <div class="inline-form">
         <input v-model="batchId" placeholder="输入 batchId" />
-        <button @click="doGetResult" :disabled="loading" class="btn btn-info">查询</button>
+        <button @click="doGetResult" :disabled="!!loading" class="btn btn-info">查询</button>
       </div>
     </div>
 
@@ -38,8 +38,8 @@
 import { ref } from 'vue'
 import { runCompare, runCompareWithBuckets, getCompareResult } from '../api/compare'
 
-type LoadingType = string | null
-const loading = ref<LoadingType>(null)
+type LoadingType = string | false
+const loading = ref<LoadingType>(false)
 const result = ref<any>(null)
 const pageSize = ref(5000)
 const bucketCount = ref(100)
@@ -50,7 +50,7 @@ async function doAction<T>(fn: () => Promise<T>, label: string) {
   loading.value = label
   try { result.value = await fn() }
   catch (e: any) { result.value = e.message || '请求失败' }
-  finally { loading.value = null }
+  finally { loading.value = false }
 }
 
 const doCompare = () => doAction(() => runCompare(pageSize.value), 'compare')

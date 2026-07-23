@@ -4,13 +4,13 @@
 
     <!-- 操作按钮 -->
     <div class="actions">
-      <button @click="doGenerate" :disabled="loading" class="btn btn-warn">
+      <button @click="doGenerate" :disabled="!!loading" class="btn btn-warn">
         {{ loading === 'generate' ? '生成中...' : '生成 1000w 模拟数据' }}
       </button>
-      <button @click="doLoad" :disabled="loading" class="btn btn-primary">
+      <button @click="doLoad" :disabled="!!loading" class="btn btn-primary">
         {{ loading === 'load' ? '加载中(3-6分钟)...' : '加载数据到 Redis' }}
       </button>
-      <button @click="doCount" :disabled="loading" class="btn btn-info">
+      <button @click="doCount" :disabled="!!loading" class="btn btn-info">
         {{ loading === 'count' ? '查询中...' : '查询 Redis 数量' }}
       </button>
     </div>
@@ -20,7 +20,7 @@
       <h3>查询指定电表</h3>
       <div class="inline-form">
         <input v-model="meterKey" placeholder="输入电表ID" />
-        <button @click="doGetKey" :disabled="loading" class="btn btn-info">查询</button>
+        <button @click="doGetKey" :disabled="!!loading" class="btn btn-info">查询</button>
       </div>
     </div>
 
@@ -36,8 +36,8 @@
 import { ref } from 'vue'
 import { generateMeter, loadMeter, countMeter, getMeterKey } from '../api/meter'
 
-type LoadingType = string | null
-const loading = ref<LoadingType>(null)
+type LoadingType = string | false
+const loading = ref<LoadingType>(false)
 const result = ref<any>(null)
 const meterKey = ref('')
 
@@ -48,7 +48,7 @@ async function doAction<T>(fn: () => Promise<T>, label: string) {
   } catch (e: any) {
     result.value = e.message || '请求失败'
   } finally {
-    loading.value = null
+    loading.value = false
   }
 }
 

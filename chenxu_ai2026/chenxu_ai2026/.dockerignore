@@ -1,0 +1,43 @@
+# Maven
+**/target/
+**/.mvn/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.eclipse/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+**/node_modules/
+**/dist/
+
+# Temp
+*.log
+*.tmp
+
+# Docs (don't need in image)
+*.md
+!README*.md
+
+# CI/CD
+.github/
+
+# K8s manifests (not needed in image)
+# EXCEPT nginx config — needed for Vue Dockerfile
+k8s/*
+!k8s/nginx-default.conf
+
+# Local tools
+tools/

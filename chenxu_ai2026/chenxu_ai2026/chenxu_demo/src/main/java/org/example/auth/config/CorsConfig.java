@@ -13,7 +13,12 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("http://localhost:5173", "http://localhost:8080")
+                .allowedOriginPatterns(
+                        "http://localhost:5173",   // Vite dev server
+                        "http://localhost:8080",   // Gateway 直连
+                        "http://localhost:31080",  // Vue K8s NodePort
+                        "http://localhost:30080"   // Gateway K8s NodePort
+                )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true)

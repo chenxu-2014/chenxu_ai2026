@@ -7,12 +7,12 @@
       <div class="inline-form">
         <input v-model="kafkaKey" placeholder="Key (可选)" />
         <input v-model="kafkaValue" placeholder="Value (可选)" />
-        <button @click="doSend" :disabled="loading" class="btn btn-primary">发送</button>
+        <button @click="doSend" :disabled="!!loading" class="btn btn-primary">发送</button>
       </div>
     </div>
 
     <div class="actions">
-      <button @click="doSendOrdered" :disabled="loading" class="btn btn-info">
+      <button @click="doSendOrdered" :disabled="!!loading" class="btn btn-info">
         {{ loading === 'ordered' ? '发送中...' : '发送 10 条有序消息' }}
       </button>
     </div>
@@ -28,8 +28,8 @@
 import { ref } from 'vue'
 import { sendKafka, sendOrdered } from '../api/kafka'
 
-type LoadingType = string | null
-const loading = ref<LoadingType>(null)
+type LoadingType = string | false
+const loading = ref<LoadingType>(false)
 const result = ref<any>(null)
 const kafkaKey = ref('')
 const kafkaValue = ref('')
@@ -38,7 +38,7 @@ async function doAction<T>(fn: () => Promise<T>, label: string) {
   loading.value = label
   try { result.value = await fn() }
   catch (e: any) { result.value = e.message || '请求失败' }
-  finally { loading.value = null }
+  finally { loading.value = false }
 }
 
 const doSend = () => doAction(() => sendKafka(kafkaKey.value, kafkaValue.value), 'send')

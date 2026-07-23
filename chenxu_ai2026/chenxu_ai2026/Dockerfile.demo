@@ -1,0 +1,36 @@
+# ============================================
+# chenxu-demo 多阶段构建
+# 阶段1: Maven 编译 (JDK 21 + Maven 3.9)
+# 阶段2: JRE 21 运行镜像 (Alpine 瘦身)
+# ============================================
+
+# ---- Stage 1: 编译 ----
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /app
+
+# 分层缓存: 复制所有模块 pom（root pom 声明了 3 个子模块，Maven 需要它们都存在）
+COPY pom.xml .
+COPY chenxu_demo/pom.xml chenxu_demo/
+COPY chenxu-gateway/pom.xml chenxu-gateway/
+COPY chenxu_niuke/pom.xml chenxu_niuke/
+# 下载依赖（利用缓存，源码未变时跳过）
+RUN mvn -pl chenxu_demo -am dependency:go-offline -q || true
+
+# 复制源码并打包
+COPY chenxu_demo/src chenxu_demo/src/
+RUN mvn -pl chenxu_demo -am package -DskipTests -q
+
+# ---- Stage 2: 运行 ----
+FROM eclipse-temurin:21-jre-alpine
+
+# 时区 + 基础工具
+RUN apk add --no-cache tzdata curl && \
+    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone
+
+COPY --from=build /app/chenxu_demo/target/*.jar app.jar
+
+EXPOSE 8081
+
+# JVM 参数可通过 JAVA_OPTS 环境变量覆盖
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS:--Xms256m -Xmx512m} -jar /app.jar"]
